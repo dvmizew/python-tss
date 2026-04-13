@@ -8,7 +8,6 @@ Test strategies implemented:
 """
 import pytest
 from audio_utils import (
-    FileNameSanitizer,
     TrackNumberParser,
     AudioFileNameBuilder,
     FolderNameBuilder,
@@ -253,6 +252,12 @@ class TestTrackNumberParser:
             current, total = TrackNumberParser.parse("Track 05")
             assert current == 5
             assert total is None
+
+        def test_parse_invalid_fraction_returns_none(self):
+            """Edge: Invalid fraction input should return None tuple."""
+            current, total = TrackNumberParser.parse("abc/def")
+            assert current is None
+            assert total is None
     
     # ==================== FORMAT TESTS ====================
     
@@ -336,6 +341,40 @@ class TestAudioFileNameBuilder:
             extension=".mp3"
         )
         assert result is None
+
+    def test_build_returns_none_when_sanitized_title_is_empty(self, windows_sanitizer):
+        """Build returns None if sanitization removes the whole title."""
+        builder = AudioFileNameBuilder(windows_sanitizer)
+        result = builder.build_filename(
+            title="???",
+            track_number="1",
+            extension=".mp3"
+        )
+        assert result is None
+
+    def test_find_lyrics_by_pattern_returns_match(self, temp_audio_dir):
+        """Pattern search should find a matching lyrics file."""
+        lyrics_path = f"{temp_audio_dir}/01 My Song.lrc"
+        with open(lyrics_path, "w", encoding="utf-8") as handle:
+            handle.write("[ti:My Song]\n")
+
+        result = LyricsFileFinder.find_lyrics_by_pattern("1/10", "My Song", temp_audio_dir)
+
+        assert result == (lyrics_path, ".lrc")
+
+    def test_find_lyrics_by_pattern_returns_none_on_oserror(self, monkeypatch, temp_audio_dir):
+        """Pattern search should handle listdir errors gracefully."""
+        monkeypatch.setattr("audio_utils.os.listdir", lambda folder: (_ for _ in ()).throw(OSError("boom")))
+
+        result = LyricsFileFinder.find_lyrics_by_pattern("1/10", "My Song", temp_audio_dir)
+
+        assert result == (None, None)
+
+    def test_find_lyrics_by_pattern_returns_none_for_invalid_input(self, temp_audio_dir):
+        """Invalid track or missing folder should return None tuple."""
+        assert LyricsFileFinder.find_lyrics_by_pattern(None, "My Song", temp_audio_dir) == (None, None)
+        assert LyricsFileFinder.find_lyrics_by_pattern("abc", "My Song", temp_audio_dir) == (None, None)
+        assert LyricsFileFinder.find_lyrics_by_pattern("1/10", "My Song", f"{temp_audio_dir}/missing") == (None, None)
     
     def test_build_extension_without_dot(self, file_name_builder):
         """Build extension without leading dot."""
