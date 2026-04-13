@@ -1,0 +1,33 @@
+[run]
+source = .
+omit =
+    tests/*
+    setup.py
+    */venv/*
+    */site-packages/*
+    */__pycache__/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abstractproperty
+    except ImportError:
+    pass
+
+precision = 2
+skip_covered = False
+skip_empty = True
+
+[html]
+directory = htmlcov
+
+[paths]
+source =
+    .
+    */site-packages
