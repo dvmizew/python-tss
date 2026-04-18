@@ -227,6 +227,18 @@ class TestTrackNumberParser:
             current, total = TrackNumberParser.parse("12/12")
             assert current == 12
             assert total == 12
+
+        def test_parse_zero_without_total(self):
+            """BVA: Zero without total - lowest valid single number."""
+            current, total = TrackNumberParser.parse("0")
+            assert current == 0
+            assert total is None
+
+        def test_parse_only_separator(self):
+            """BVA: Only separator, no digits."""
+            current, total = TrackNumberParser.parse("/")
+            assert current is None
+            assert total is None
         
         # Edge: Invalid inputs
         def test_parse_non_numeric(self):
@@ -274,6 +286,21 @@ class TestTrackNumberParser:
             result = TrackNumberParser.format_track(5, 12)
             assert result == "5/12"
         
+        def test_format_zero_without_total(self):
+            """BVA: Zero without total - lowest possible value."""
+            result = TrackNumberParser.format_track(0)
+            assert result == "0"
+
+        def test_format_zero_with_zero_total(self):
+            """BVA: Zero with zero total."""
+            result = TrackNumberParser.format_track(0, 0)
+            assert result == "0/0"
+
+        def test_format_one_without_total(self):
+            """BVA: First normal track without total."""
+            result = TrackNumberParser.format_track(1)
+            assert result == "1"
+
         def test_format_track_one_of_one(self):
             """Format single track."""
             result = TrackNumberParser.format_track(1, 1)
@@ -303,6 +330,16 @@ class TestTrackNumberParser:
             """Pad 99."""
             result = TrackNumberParser.pad_track(99)
             assert result == "99"
+
+        def test_pad_nine(self):
+            """BVA: Last single digit number."""
+            result = TrackNumberParser.pad_track(9)
+            assert result == "09"
+
+        def test_pad_ten(self):
+            """BVA: First double digit number."""
+            result = TrackNumberParser.pad_track(10)
+            assert result == "10"
 
 
 class TestAudioFileNameBuilder:
