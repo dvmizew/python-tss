@@ -319,16 +319,17 @@ Acoperirea la nivel de instrucțiune verifică că fiecare instrucțiune (nod di
 
 #### Grafurile de flux de control (CFG)
 
+*CFG pentru `parse()`*
 ![CFG parse](diagrams/cfg_parse.drawio.png)
 
-*CFG pentru `parse()`*
+*CFG pentru `format_track()`*
 ![CFG format_track](diagrams/cfg_format.drawio.png)
 
-*CFG pentru `format_track()`*
-
-![CFG pad_track](diagrams/cfg_pad_track.drawio.png)
 
 *CFG pentru `pad_track()`*
+![CFG pad_track](diagrams/cfg_pad_track.drawio.png)
+
+
 
 **Rezultate rulare:**
 
