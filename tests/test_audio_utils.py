@@ -179,131 +179,140 @@ class TestFileNameSanitizer:
 
 class TestTrackNumberParser:
     """Tests for TrackNumberParser class."""
-    
-    # ==================== PARSE TESTS ====================
-    
+
     class TestParse:
-        """Tests for parse() method."""
-        
-        def test_parse_normal_track_with_total(self):
-            """Normal case: 'N/Total' format."""
-            current, total = TrackNumberParser.parse("5/12")
-            assert current == 5
-            assert total == 12
-        
-        def test_parse_single_digit(self):
-            """Single digit: '5'."""
-            current, total = TrackNumberParser.parse("5")
-            assert current == 5
-            assert total is None
-        
-        def test_parse_double_digit(self):
-            """Double digit: '12'."""
-            current, total = TrackNumberParser.parse("12")
-            assert current == 12
-            assert total is None
-        
-        def test_parse_with_leading_zeros(self):
-            """Leading zeros: '01/10'."""
-            current, total = TrackNumberParser.parse("01/10")
-            assert current == 1
-            assert total == 10
-        
-        # BVA: Boundary cases
-        def test_parse_track_zero(self):
-            """BVA: Track 0."""
-            current, total = TrackNumberParser.parse("0/1")
-            assert current == 0
-            assert total == 1
-        
-        def test_parse_track_exceeds_total(self):
-            """BVA: Track number > total."""
-            current, total = TrackNumberParser.parse("15/10")
-            assert current == 15
-            assert total == 10
-        
-        def test_parse_same_track_and_total(self):
-            """BVA: Track = Total."""
-            current, total = TrackNumberParser.parse("12/12")
-            assert current == 12
-            assert total == 12
-        
-        # Edge: Invalid inputs
-        def test_parse_non_numeric(self):
-            """Edge: Non-numeric input."""
-            current, total = TrackNumberParser.parse("ABC")
-            assert current is None
-            assert total is None
-        
-        def test_parse_empty_string(self):
-            """Edge: Empty string."""
-            current, total = TrackNumberParser.parse("")
-            assert current is None
-            assert total is None
-        
-        def test_parse_none(self):
-            """Edge: None input."""
-            current, total = TrackNumberParser.parse(None)
-            assert current is None
-            assert total is None
-        
-        def test_parse_with_trash_prefix(self):
-            """Edge: Track with prefix (e.g. 'Track 05')."""
-            current, total = TrackNumberParser.parse("Track 05")
-            assert current == 5
-            assert total is None
 
-        def test_parse_invalid_fraction_returns_none(self):
-            """Edge: Invalid fraction input should return None tuple."""
-            current, total = TrackNumberParser.parse("abc/def")
-            assert current is None
-            assert total is None
-    
-    # ==================== FORMAT TESTS ====================
-    
+        class TestEC:
+            # C1 - input null sau gol
+            def test_parse_none(self):
+                current, total = TrackNumberParser.parse(None)
+                assert current is None
+                assert total is None
+
+            def test_parse_empty_string(self):
+                current, total = TrackNumberParser.parse("")
+                assert current is None
+                assert total is None
+
+            # C2 - numar simplu valid fara slash
+            def test_parse_single_number(self):
+                current, total = TrackNumberParser.parse("5")
+                assert current == 5
+                assert total is None
+
+            # C3 - format cu slash valid
+            def test_parse_slash_format(self):
+                current, total = TrackNumberParser.parse("5/12")
+                assert current == 5
+                assert total == 12
+
+            # C4 - slash prezent dar invalid
+            def test_parse_slash_missing_total(self):
+                current, total = TrackNumberParser.parse("5/")
+                assert current is None
+                assert total is None
+
+            # C5 - string fara cifre
+            def test_parse_no_digits(self):
+                current, total = TrackNumberParser.parse("ABC")
+                assert current is None
+                assert total is None
+
+            # C6 - litere si cifre amestecate
+            def test_parse_alphanumeric(self):
+                current, total = TrackNumberParser.parse("Track 05")
+                assert current == 5
+                assert total is None
+
+            # C7 - input non-string
+            def test_parse_integer_input(self):
+                current, total = TrackNumberParser.parse(10)
+                assert current == 10
+                assert total is None
+
+        class TestBVA:
+            # BVA1 - marginea de jos a C2
+            def test_parse_zero_without_total(self):
+                current, total = TrackNumberParser.parse("0")
+                assert current == 0
+                assert total is None
+
+            # BVA2 - marginea de jos a C3
+            def test_parse_zero_with_total(self):
+                current, total = TrackNumberParser.parse("0/1")
+                assert current == 0
+                assert total == 1
+
+            # BVA3 - track egal cu total
+            def test_parse_track_equals_total(self):
+                current, total = TrackNumberParser.parse("12/12")
+                assert current == 12
+                assert total == 12
+
+            # BVA4 - track mai mare ca total
+            def test_parse_track_exceeds_total(self):
+                current, total = TrackNumberParser.parse("15/10")
+                assert current == 15
+                assert total == 10
+
+            # BVA5 - doar separator
+            def test_parse_only_separator(self):
+                current, total = TrackNumberParser.parse("/")
+                assert current is None
+                assert total is None
+
     class TestFormat:
-        """Tests for format_track() method."""
-        
-        def test_format_without_total(self):
-            """Format without total: just number."""
-            result = TrackNumberParser.format_track(5)
-            assert result == "5"
-        
-        def test_format_with_total(self):
-            """Format with total: 'current/total'."""
-            result = TrackNumberParser.format_track(5, 12)
-            assert result == "5/12"
-        
-        def test_format_track_one_of_one(self):
-            """Format single track."""
-            result = TrackNumberParser.format_track(1, 1)
-            assert result == "1/1"
-    
-    # ==================== PAD TESTS ====================
-    
-    class TestPad:
-        """Tests for pad_track() method."""
-        
-        def test_pad_single_digit(self):
-            """Pad single digit."""
-            result = TrackNumberParser.pad_track(5)
-            assert result == "05"
-        
-        def test_pad_double_digit(self):
-            """Pad double digit (unchanged)."""
-            result = TrackNumberParser.pad_track(12)
-            assert result == "12"
-        
-        def test_pad_zero(self):
-            """Pad zero."""
-            result = TrackNumberParser.pad_track(0)
-            assert result == "00"
-        
-        def test_pad_99(self):
-            """Pad 99."""
-            result = TrackNumberParser.pad_track(99)
-            assert result == "99"
 
+        class TestEC:
+            # C1 - fara total
+            def test_format_track_without_total(self):
+                result = TrackNumberParser.format_track(5)
+                assert result == "5"
+
+            # C2 - cu total
+            def test_format_track_with_total(self):
+                result = TrackNumberParser.format_track(5, 12)
+                assert result == "5/12"
+
+        class TestBVA:
+            # BVA1 - marginea de jos a C1
+            def test_format_track_zero_without_total(self):
+                result = TrackNumberParser.format_track(0)
+                assert result == "0"
+
+            # BVA2 - marginea de jos a C2
+            def test_format_track_zero_with_zero_total(self):
+                result = TrackNumberParser.format_track(0, 0)
+                assert result == "0/0"
+
+    class TestPad:
+
+        class TestEC:
+            # C1 - numar cu o cifra
+            def test_pad_track_single_digit(self):
+                result = TrackNumberParser.pad_track(5)
+                assert result == "05"
+
+            # C2 - numar cu doua cifre
+            def test_pad_track_double_digit(self):
+                result = TrackNumberParser.pad_track(12)
+                assert result == "12"
+
+        class TestBVA:
+            # BVA1 - marginea de jos a C1
+            def test_pad_track_zero(self):
+                result = TrackNumberParser.pad_track(0)
+                assert result == "00"
+
+            # BVA2 - ultimul numar cu o cifra
+            def test_pad_track_nine(self):
+                result = TrackNumberParser.pad_track(9)
+                assert result == "09"
+
+            # BVA3 - primul numar cu doua cifre
+            def test_pad_track_ten(self):
+                result = TrackNumberParser.pad_track(10)
+                assert result == "10"
 
 class TestAudioFileNameBuilder:
     """Tests for AudioFileNameBuilder class."""
