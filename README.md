@@ -16,7 +16,7 @@ Proiectul a fost dezvoltat și testat pe trei sisteme diferite. Mai jos sunt pre
 |--------|-----|----------|-----|
 | Radu Daniel | ... | ... | ... |
 | Roman Bianca | Ubuntu 24.04 | Intel Core i7-1255U (12th Gen) | 16 GB |
-| Costache Carolina | ... | ... | ... |
+| Costache Carolina-Andreea | macOS Tahoe | Apple M4 Pro | 24 GB |
 
 Versiunile tool-urilor utilizate sunt identice pe toate sistemele:
 - Python 3.12.3
