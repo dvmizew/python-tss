@@ -30,8 +30,7 @@ Versiunile tool-urilor utilizate sunt identice pe toate sistemele:
 ### 1. Partiționare în clase de echivalență
 
 #### `parse()`
-Metoda `parse()` primește numărul de track stocat în tagurile 
-unui fișier audio și îl transformă într-un tuplu `(current, total)`.
+Metoda `parse()` primește numărul de track stocat în tagurile unui fișier audio și îl transformă într-un tuplu `(current, total)`.
 
 Am împărțit setul de date de intrare în clase de echivalență.
 
@@ -108,8 +107,6 @@ def test_parse_integer_input(self):
 
 ![EC parse](photos/EC_parse.png)
 
----
-
 #### `format_track()`
 
 Metoda primește numărul curent de track și opțional totalul, returnând un string formatat. Singura decizie din funcție este dacă `total` este furnizat sau nu.
@@ -134,8 +131,6 @@ def test_format_track_with_total(self):
 ```
 
 ![EC format_track](photos/EC_format.png)
-
----
 
 #### `pad_track()`
 
@@ -162,12 +157,9 @@ def test_pad_track_double_digit(self):
 
 ![EC pad_track](photos/EC_pad.png)
 
----
-
 ### 2. Analiza valorilor de frontieră
 
 #### `parse()`
-
 
 | Valoare de frontieră | Clasă | Descriere | Input | Output așteptat |
 |:---|:---|:---|:---|:---|
@@ -176,7 +168,6 @@ def test_pad_track_double_digit(self):
 | **BVA3** | C3 | Track egal cu total | `"12/12"` | `(12, 12)` |
 | **BVA4** | C3 | Track mai mare decât total | `"15/10"` | `(15, 10)` |
 | **BVA5** | C4 | Doar separator, fără cifre | `"/"` | `(None, None)` |
-
 
 **BVA1 - zero fără total (marginea de jos a C2):**
 ```python
@@ -220,8 +211,6 @@ def test_parse_only_separator(self):
 
 ![BVA parse](photos/BVA_parse.png)
 
----
-
 #### `format_track()`
 
 Funcția nu conține logică numerică internă, doar construiește un string. Singurele frontiere relevante sunt valorile minime posibile pentru fiecare clasă.
@@ -246,8 +235,6 @@ def test_format_track_zero_with_zero_total(self):
 ```
 
 ![BVA format_track](photos/BVA_format.png)
-
----
 
 #### `pad_track()`
 
@@ -282,42 +269,32 @@ def test_pad_track_ten(self):
 
 ![BVA pad_track](photos/BVA_pad.png)
 
----
-
 ### 3. Acoperire la nivel de instrucțiune (Statement Coverage)
 
 Acoperirea la nivel de instrucțiune verifică că fiecare instrucțiune (nod din CFG) este executată cel puțin o dată.
 
-#### Nodurile identificate
-
 **`parse()`:**
 
-| Nod | Instrucțiune | Test care îl acoperă |
+| track_num | Rezultat afișat | Instrucțiuni parcurse |
 |:---|:---|:---|
-| N1 | `if not track_num` | `test_parse_none` |
-| N2 | `return None, None` | `test_parse_none` |
-| N3 | `track_str = str(track_num).strip()` | `test_parse_single_number` |
-| N4 | `if "/" in track_str` | `test_parse_single_number` |
-| N5 | `split("/")` + `return current, total` | `test_parse_slash_format` |
-| N6 | `return None, None` (except slash) | `test_parse_slash_missing_total` |
-| N7 | `int(cifre)` + `return current, None` | `test_parse_single_number` |
-| N8 | `return None, None` (except simplu) | `test_parse_no_digits` |
+| `None` | `(None, None)` | 10, 11 |
+| `"5/12"` | `(5, 12)` | 10, 13, 15, 16, 18, 19, 20 |
+| `"5/"` | `(None, None)` | 10, 13, 15, 16, 18, 22 |
+| `"5"` | `(5, None)` | 10, 13, 15, 25, 26 |
+| `"ABC"` | `(None, None)` | 10, 13, 15, 25, 28 |
 
 **`format_track()`:**
 
-| Nod | Instrucțiune | Test care îl acoperă |
-|:---|:---|:---|
-| N1 | `if total is not None` | `test_format_track_without_total` |
-| N2 | `return f"{current}/{total}"` | `test_format_track_with_total` |
-| N3 | `return str(current)` | `test_format_track_without_total` |
+| current | total | Rezultat afișat | Instrucțiuni parcurse |
+|:---|:---|:---|:---|
+| `5` | `12` | `"5/12"` | 32, 33 |
+| `5` | - | `"5"` | 32, 34 |
 
 **`pad_track()`:**
 
-| Nod | Instrucțiune | Test care îl acoperă |
+| track_num | Rezultat afișat | Instrucțiuni parcurse |
 |:---|:---|:---|
-| N1 | `return f"{track_num:02d}"` | `test_pad_track_single_digit` |
-
-#### Grafurile de flux de control (CFG)
+| `5` | `"05"` | 38 |
 
 *CFG pentru `parse()`*
 ![CFG parse](diagrams/cfg_parse.drawio.png)
@@ -325,41 +302,39 @@ Acoperirea la nivel de instrucțiune verifică că fiecare instrucțiune (nod di
 *CFG pentru `format_track()`*
 ![CFG format_track](diagrams/cfg_format.drawio.png)
 
-
 *CFG pentru `pad_track()`*
-![CFG pad_track](diagrams/cfg_pad_track.drawio.png)
-
-
+![CFG pad_track](diagrams/cfg_pad.drawio.png)
 
 **Rezultate rulare:**
 
 ![Statement Coverage](photos/statment_covarage_all.png)
 
 Fișierul `track_number_parser.py` conține 32 de instrucțiuni, toate acoperite de testele EC și BVA. Acoperirea la nivel de instrucțiune este de 100% pentru clasa `TrackNumberParser`.
+
 ### 4. Acoperire la nivel de decizie (Decision Coverage)
 
-Acoperirea la nivel de decizie verifică că fiecare ramură a unei decizii (True și False) este parcursă cel puțin o dată.
-
-#### Deciziile identificate
+Acoperirea la nivel de decizie verifică că fiecare ramură a unei decizii este parcursă cel puțin o dată.
 
 **`parse()`:**
 
-| Decizie | Ramura True | Test care o acoperă | Ramura False | Test care o acoperă |
-|:---|:---|:---|:---|:---|
-| `if not track_num` | return None, None | `test_parse_none` | continuă execuția | `test_parse_single_number` |
-| `if "/" in track_str` | parsează cu slash | `test_parse_slash_format` | parsează fără slash | `test_parse_single_number` |
-| `try/except` bloc slash | return current, total | `test_parse_slash_format` | return None, None | `test_parse_slash_missing_total` |
-| `try/except` bloc simplu | return current, None | `test_parse_single_number` | return None, None | `test_parse_no_digits` |
+| track_num | Rezultat afișat | Decizii acoperite |
+|:---|:---|:---|
+| `None` | `(None, None)` | `if not track_num` True |
+| `"5"` | `(5, None)` | `if not track_num` False; `if "/" in track_str` False; try succes |
+| `"5/12"` | `(5, 12)` | `if "/" in track_str` True; try succes |
+| `"5/"` | `(None, None)` | try/except slash except |
+| `"ABC"` | `(None, None)` | try/except simplu except |
 
 **`format_track()`:**
 
-| Decizie | Ramura True | Test care o acoperă | Ramura False | Test care o acoperă |
-|:---|:---|:---|:---|:---|
-| `if total is not None` | return current/total | `test_format_track_with_total` | return str(current) | `test_format_track_without_total` |
+| current | total | Rezultat afișat | Decizii acoperite |
+|:---|:---|:---|:---|
+| `5` | `12` | `"5/12"` | `if total is not None` True |
+| `5` | - | `"5"` | `if total is not None` False |
 
-**`pad_track()`:** nu conține decizii, are un singur bloc de execuție.
+**`pad_track()`:** nu conține decizii, un singur bloc de execuție.
 
-#### Rezultate rulare
+**Rezultate rulare:**
 
 ![Decision Coverage](photos/branch_coverage.png)
 
@@ -367,27 +342,25 @@ Toate cele 6 ramuri identificate sunt acoperite, rezultând o acoperire de 100% 
 
 ### 5. Acoperire la nivel de condiție (Condition Coverage)
 
-Acoperirea la nivel de condiție verifică că fiecare condiție atomică dintr-o decizie ia atât valoarea True cât și valoarea False.
-
-#### Condițiile identificate
+Acoperirea la nivel de condiție verifică că fiecare condiție individuală dintr-o decizie ia atât valoarea True cât și valoarea False.
 
 **`parse()`:**
 
-| Condiție atomică | Valoare True | Test | Valoare False | Test |
-|:---|:---|:---|:---|:---|
-| `not track_num` | `None` | `test_parse_none` | `"5"` | `test_parse_single_number` |
-| `"/" in track_str` | `"5/12"` | `test_parse_slash_format` | `"5"` | `test_parse_single_number` |
-| `c.isdigit()` (parts[0]) | `"5/12"` | `test_parse_slash_format` | `"5/"` | `test_parse_slash_missing_total` |
-| `c.isdigit()` (parts[1]) | `"5/12"` | `test_parse_slash_format` | `"abc/def"` | `test_parse_no_digits` |
-| `c.isdigit()` (bloc simplu) | `"5"` | `test_parse_single_number` | `"ABC"` | `test_parse_no_digits` |
+| track_num | Rezultat afișat | Condiții individuale acoperite |
+|:---|:---|:---|
+| `None` | `(None, None)` | `not track_num` True |
+| `"5"` | `(5, None)` | `not track_num` False; `"/" in track_str` False |
+| `"5/12"` | `(5, 12)` | `"/" in track_str` True |
+| `"5/"` | `(None, None)` | `c.isdigit()` parts[1] False |
+| `"ABC"` | `(None, None)` | `c.isdigit()` simplu False |
 
 **`format_track()`:**
 
-| Condiție atomică | Valoare True | Test | Valoare False | Test |
-|:---|:---|:---|:---|:---|
-| `total is not None` | `(5, 12)` | `test_format_track_with_total` | `(5)` | `test_format_track_without_total` |
+| current | total | Rezultat afișat | Condiții individuale acoperite |
+|:---|:---|:---|:---|
+| `5` | `12` | `"5/12"` | `total is not None` True |
+| `5` | - | `"5"` | `total is not None` False |
 
-**`pad_track()`:** nu conține condiții atomice, are un singur bloc de execuție.
+**`pad_track()`:** nu conține condiții individuale, un singur bloc de execuție.
 
-
-Toate condițiile atomice identificate iau atât valoarea True cât și valoarea False în cadrul testelor EC existente. Nu au fost necesare teste suplimentare pentru a atinge acoperirea la nivel de condiție.
+Toate condițiile individuale iau atât valoarea True cât și valoarea False în cadrul testelor EC existente. Nu au fost necesare teste suplimentare.
