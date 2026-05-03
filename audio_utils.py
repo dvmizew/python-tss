@@ -169,7 +169,7 @@ class AudioFileNameBuilder:
             return None
         
         # Parse track number
-        current_track, _ = TrackNumberParser.parse(track_number)
+        current_track, _, _ = TrackNumberParser.validate_and_normalize(track_number)
         
         if current_track:
             padded_track = TrackNumberParser.pad_track(current_track)
@@ -270,7 +270,7 @@ class LyricsFileFinder:
         if not track_number or not os.path.isdir(folder):
             return None, None
         
-        current_track, _ = TrackNumberParser.parse(track_number)
+        current_track, _, _ = TrackNumberParser.validate_and_normalize(track_number)
         if not current_track:
             return None, None
         

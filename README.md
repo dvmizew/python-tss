@@ -246,3 +246,17 @@ n) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45, 7
 | n) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45 | `"3"` | `10` | `(3, None, None)` | CC2 |
 
 ![Independent Circuits](photos/CI.png)
+
+## Testare bazată pe mutații (Mutation Testing)
+
+În urma rulării suitei de teste cu o acoperire a codului (coverage) activată în prealabil, mutmut a generat și verificat mutanții cu următoarele rezultate:
+
+![Mutatii](photos/mutatii1.png)
+
+Rata de succes (Mutation Score): ~93.6% (44 din 47)
+
+Faptul că 44 din 47 de mutanți au fost detectați și uciși de teste validează acoperirea excelentă a logicii complexe de parsare (inclusiv operatorii logici, limitele max_tracks și împărțirea cu /).
+
+Cei 3 mutanți care au supraviețuit reprezintă porțiuni de cod unde testele actuale trec, deși codul sursă a fost modificat de utilitar.
+
+![Mutatii](photos/mutatii2.png)

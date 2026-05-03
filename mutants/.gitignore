@@ -1,0 +1,70 @@
+/misc
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+.env
+tss-venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+.hypothesis/
+*.pyc
+
+# Mutation testing
+.mutmut-*.json
+mutmut_results.json
+*.mutmut
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+.tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+*.o
+*.a
