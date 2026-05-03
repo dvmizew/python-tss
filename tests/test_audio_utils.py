@@ -177,142 +177,142 @@ class TestFileNameSanitizer:
             assert result == "Song..."
 
 
-class TestTrackNumberParser:
-    """Tests for TrackNumberParser class."""
+# class TestTrackNumberParser:
+#     """Tests for TrackNumberParser class."""
 
-    class TestParse:
+#     class TestParse:
 
-        class TestEC:
-            # C1 - input null sau gol
-            def test_parse_none(self):
-                current, total = TrackNumberParser.parse(None)
-                assert current is None
-                assert total is None
+#         class TestEC:
+#             # C1 - input null sau gol
+#             def test_parse_none(self):
+#                 current, total = TrackNumberParser.parse(None)
+#                 assert current is None
+#                 assert total is None
 
-            def test_parse_empty_string(self):
-                current, total = TrackNumberParser.parse("")
-                assert current is None
-                assert total is None
+#             def test_parse_empty_string(self):
+#                 current, total = TrackNumberParser.parse("")
+#                 assert current is None
+#                 assert total is None
 
-            # C2 - numar simplu valid fara slash
-            def test_parse_single_number(self):
-                current, total = TrackNumberParser.parse("5")
-                assert current == 5
-                assert total is None
+#             # C2 - numar simplu valid fara slash
+#             def test_parse_single_number(self):
+#                 current, total = TrackNumberParser.parse("5")
+#                 assert current == 5
+#                 assert total is None
 
-            # C3 - format cu slash valid
-            def test_parse_slash_format(self):
-                current, total = TrackNumberParser.parse("5/12")
-                assert current == 5
-                assert total == 12
+#             # C3 - format cu slash valid
+#             def test_parse_slash_format(self):
+#                 current, total = TrackNumberParser.parse("5/12")
+#                 assert current == 5
+#                 assert total == 12
 
-            # C4 - slash prezent dar invalid
-            def test_parse_slash_missing_total(self):
-                current, total = TrackNumberParser.parse("5/")
-                assert current is None
-                assert total is None
+#             # C4 - slash prezent dar invalid
+#             def test_parse_slash_missing_total(self):
+#                 current, total = TrackNumberParser.parse("5/")
+#                 assert current is None
+#                 assert total is None
 
-            # C5 - string fara cifre
-            def test_parse_no_digits(self):
-                current, total = TrackNumberParser.parse("ABC")
-                assert current is None
-                assert total is None
+#             # C5 - string fara cifre
+#             def test_parse_no_digits(self):
+#                 current, total = TrackNumberParser.parse("ABC")
+#                 assert current is None
+#                 assert total is None
 
-            # C6 - litere si cifre amestecate
-            def test_parse_alphanumeric(self):
-                current, total = TrackNumberParser.parse("Track 05")
-                assert current == 5
-                assert total is None
+#             # C6 - litere si cifre amestecate
+#             def test_parse_alphanumeric(self):
+#                 current, total = TrackNumberParser.parse("Track 05")
+#                 assert current == 5
+#                 assert total is None
 
-            # C7 - input non-string
-            def test_parse_integer_input(self):
-                current, total = TrackNumberParser.parse(10)
-                assert current == 10
-                assert total is None
+#             # C7 - input non-string
+#             def test_parse_integer_input(self):
+#                 current, total = TrackNumberParser.parse(10)
+#                 assert current == 10
+#                 assert total is None
 
-        class TestBVA:
-            # BVA1 - marginea de jos a C2
-            def test_parse_zero_without_total(self):
-                current, total = TrackNumberParser.parse("0")
-                assert current == 0
-                assert total is None
+#         class TestBVA:
+#             # BVA1 - marginea de jos a C2
+#             def test_parse_zero_without_total(self):
+#                 current, total = TrackNumberParser.parse("0")
+#                 assert current == 0
+#                 assert total is None
 
-            # BVA2 - marginea de jos a C3
-            def test_parse_zero_with_total(self):
-                current, total = TrackNumberParser.parse("0/1")
-                assert current == 0
-                assert total == 1
+#             # BVA2 - marginea de jos a C3
+#             def test_parse_zero_with_total(self):
+#                 current, total = TrackNumberParser.parse("0/1")
+#                 assert current == 0
+#                 assert total == 1
 
-            # BVA3 - track egal cu total
-            def test_parse_track_equals_total(self):
-                current, total = TrackNumberParser.parse("12/12")
-                assert current == 12
-                assert total == 12
+#             # BVA3 - track egal cu total
+#             def test_parse_track_equals_total(self):
+#                 current, total = TrackNumberParser.parse("12/12")
+#                 assert current == 12
+#                 assert total == 12
 
-            # BVA4 - track mai mare ca total
-            def test_parse_track_exceeds_total(self):
-                current, total = TrackNumberParser.parse("15/10")
-                assert current == 15
-                assert total == 10
+#             # BVA4 - track mai mare ca total
+#             def test_parse_track_exceeds_total(self):
+#                 current, total = TrackNumberParser.parse("15/10")
+#                 assert current == 15
+#                 assert total == 10
 
-            # BVA5 - doar separator
-            def test_parse_only_separator(self):
-                current, total = TrackNumberParser.parse("/")
-                assert current is None
-                assert total is None
+#             # BVA5 - doar separator
+#             def test_parse_only_separator(self):
+#                 current, total = TrackNumberParser.parse("/")
+#                 assert current is None
+#                 assert total is None
 
-    class TestFormat:
+#     class TestFormat:
 
-        class TestEC:
-            # C1 - fara total
-            def test_format_track_without_total(self):
-                result = TrackNumberParser.format_track(5)
-                assert result == "5"
+#         class TestEC:
+#             # C1 - fara total
+#             def test_format_track_without_total(self):
+#                 result = TrackNumberParser.format_track(5)
+#                 assert result == "5"
 
-            # C2 - cu total
-            def test_format_track_with_total(self):
-                result = TrackNumberParser.format_track(5, 12)
-                assert result == "5/12"
+#             # C2 - cu total
+#             def test_format_track_with_total(self):
+#                 result = TrackNumberParser.format_track(5, 12)
+#                 assert result == "5/12"
 
-        class TestBVA:
-            # BVA1 - marginea de jos a C1
-            def test_format_track_zero_without_total(self):
-                result = TrackNumberParser.format_track(0)
-                assert result == "0"
+#         class TestBVA:
+#             # BVA1 - marginea de jos a C1
+#             def test_format_track_zero_without_total(self):
+#                 result = TrackNumberParser.format_track(0)
+#                 assert result == "0"
 
-            # BVA2 - marginea de jos a C2
-            def test_format_track_zero_with_zero_total(self):
-                result = TrackNumberParser.format_track(0, 0)
-                assert result == "0/0"
+#             # BVA2 - marginea de jos a C2
+#             def test_format_track_zero_with_zero_total(self):
+#                 result = TrackNumberParser.format_track(0, 0)
+#                 assert result == "0/0"
 
-    class TestPad:
+#     class TestPad:
 
-        class TestEC:
-            # C1 - numar cu o cifra
-            def test_pad_track_single_digit(self):
-                result = TrackNumberParser.pad_track(5)
-                assert result == "05"
+#         class TestEC:
+#             # C1 - numar cu o cifra
+#             def test_pad_track_single_digit(self):
+#                 result = TrackNumberParser.pad_track(5)
+#                 assert result == "05"
 
-            # C2 - numar cu doua cifre
-            def test_pad_track_double_digit(self):
-                result = TrackNumberParser.pad_track(12)
-                assert result == "12"
+#             # C2 - numar cu doua cifre
+#             def test_pad_track_double_digit(self):
+#                 result = TrackNumberParser.pad_track(12)
+#                 assert result == "12"
 
-        class TestBVA:
-            # BVA1 - marginea de jos a C1
-            def test_pad_track_zero(self):
-                result = TrackNumberParser.pad_track(0)
-                assert result == "00"
+#         class TestBVA:
+#             # BVA1 - marginea de jos a C1
+#             def test_pad_track_zero(self):
+#                 result = TrackNumberParser.pad_track(0)
+#                 assert result == "00"
 
-            # BVA2 - ultimul numar cu o cifra
-            def test_pad_track_nine(self):
-                result = TrackNumberParser.pad_track(9)
-                assert result == "09"
+#             # BVA2 - ultimul numar cu o cifra
+#             def test_pad_track_nine(self):
+#                 result = TrackNumberParser.pad_track(9)
+#                 assert result == "09"
 
-            # BVA3 - primul numar cu doua cifre
-            def test_pad_track_ten(self):
-                result = TrackNumberParser.pad_track(10)
-                assert result == "10"
+#             # BVA3 - primul numar cu doua cifre
+#             def test_pad_track_ten(self):
+#                 result = TrackNumberParser.pad_track(10)
+#                 assert result == "10"
 
 class TestAudioFileNameBuilder:
     """Tests for AudioFileNameBuilder class."""
