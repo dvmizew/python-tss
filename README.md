@@ -6,8 +6,7 @@ Aplicația este un utilitar Python care redenumește automat fișiere audio pe b
 
 ## Clasa testată
 
-Pentru ilustrarea strategiilor de testare am ales clasa `TrackNumberParser` din modulul `track_number_parser.py`. Aceasta este responsabilă de parsarea și manipularea numerelor de track ale fișierelor audio și conține trei metode: `parse()`, `format_track()` și `pad_track()`.
-
+Pentru ilustrarea strategiilor de testare am ales clasa `TrackNumberParser` din modulul `track_number_parser.py`. Aceasta este responsabilă de parsarea, validarea și normalizarea numerelor de track ale fișierelor audio și conține o singură metodă statică: `validate_and_normalize()`.
 ## Configurație
 
 Proiectul a fost dezvoltat și testat pe trei sisteme diferite. Mai jos sunt prezentate configurațiile hardware și software utilizate de fiecare membru al echipei.
@@ -28,13 +27,13 @@ Versiunile tool-urilor utilizate sunt identice pe toate sistemele:
 ## Strategii de testare
 
 
-# 1.Clase de echivalență — `validate_and_normalize`
+# 1.Clase de echivalență
 
 ## Specificații
 
-Funcția primește un string `track_num` care reprezintă numărul unui track (ex: `"3"` sau `"3/10"`) și un întreg opțional `max_tracks` care reprezintă limita maximă a albumului. Returnează un tuplu `(current, total, error)`. Dacă inputul e valid, `error` este `None`; dacă e invalid, `current` și `total` sunt `None` și `error` conține mesajul erorii.
+Funcția primește un string `track_num` care reprezintă numărul unui track (`"3"` sau `"3/10"`) și un întreg opțional `max_tracks` care reprezintă limita maximă a albumului. Returnează un tuplu `(current, total, error)`. Dacă inputul e valid, `error` este `None`; dacă e invalid, `current` și `total` sunt `None` și `error` conține mesajul erorii.
 
-`track_num` poate fi `None`, un string gol, un număr simplu sau un număr în formatul `current/total`. Dacă conține litere amestecate cu cifre, cifrele sunt extrase automat. Valorile extrase nu pot fi zero. Dacă există `total`, `current` nu poate depăși `total`. Dacă este furnizat `max_tracks`, nici `total` (sau `current` în absența lui) nu poate depăși această limită.
+`track_num` poate fi `None`, un string gol, un număr simplu sau un număr în formatul `current/total`. Dacă conține litere si cifre, literele sunt eliminate. Cifrele nu pot fi zero. Dacă există `total`, `current` nu poate depăși `total`. Dacă este furnizat `max_tracks`, nici `total` nici `current` nu pot depăși această limită.
 
 ---
 
@@ -46,9 +45,9 @@ Funcția primește un string `track_num` care reprezintă numărul unui track (e
 | C1 | Input absent | `None` | `None` | `(None, None, "empty input")` |
 | C2 | Input gol | `""` | `None` | `(None, None, "empty input")` |
 | C3 | Input doar spații | `"   "` | `None` | `(None, None, "empty input")` |
-| C4 | Nicio cifră în string | `"abc"` | `None` | `(None, None, "parse error")` |
+| C4 | Fara cifră în string | `"abc"` | `None` | `(None, None, "parse error")` |
 | C5 | Current este zero | `"0"` | `None` | `(None, None, "zero not allowed")` |
-| C6 | Current este zero (format slash) | `"0/10"` | `None` | `(None, None, "zero not allowed")` |
+| C6 | Current este zero (format cu slash) | `"0/10"` | `None` | `(None, None, "zero not allowed")` |
 | C7 | Total este zero | `"3/0"` | `None` | `(None, None, "zero not allowed")` |
 | C8 | Current depășește total | `"7/3"` | `None` | `(None, None, "current exceeds total")` |
 | C9 | Total depășește max_tracks | `"3/15"` | `10` | `(None, None, "total exceeds max")` |
@@ -62,20 +61,10 @@ Funcția primește un string `track_num` care reprezintă numărul unui track (e
 
  ![Clase de echivalență](photos/EC.png)
 
- # Clase de frontieră — `validate_and_normalize`
+ # Clase de frontieră
 
-## Specificații
+Testarea la frontieră verifică valorile exact pe limita dintre două clase de echivalență, imediat sub și imediat peste.
 
-Testarea la frontieră verifică valorile exact pe limita dintre două clase de echivalență, imediat sub și imediat peste. Erorile apar cel mai frecvent la aceste valori limită.
-
-Frontierele identificate în funcție sunt:
-
-- **Frontiera zero/unu** — valoarea minimă permisă pentru `current` și `total` este 1; zero este invalid
-- **Frontiera current/total** — `current` poate fi cel mult egal cu `total`; dacă îl depășește cu 1, e invalid
-- **Frontiera total/max_tracks** — `total` poate fi cel mult egal cu `max_tracks`; dacă îl depășește cu 1, e invalid
-- **Frontiera current/max_tracks** — când nu există `total`, `current` poate fi cel mult egal cu `max_tracks`; dacă îl depășește cu 1, e invalid
-
----
 
 ## Tabel clase de frontieră
 
@@ -88,20 +77,22 @@ Frontierele identificate în funcție sunt:
 | F5 | Total exact pe limita minimă | `"1/1"` | `None` | `(1, 1, None)` |
 | F6 | Total peste limita minimă | `"1/2"` | `None` | `(1, 2, None)` |
 | F7 | Current sub total cu o unitate | `"4/5"` | `None` | `(4, 5, None)` |
-| F8 | Current egal cu total (exact pe limită) | `"5/5"` | `None` | `(5, 5, None)` |
+| F8 | Current egal cu total | `"5/5"` | `None` | `(5, 5, None)` |
 | F9 | Current depășește total cu o unitate | `"6/5"` | `None` | `(None, None, "current exceeds total")` |
 | F10 | Total sub max_tracks cu o unitate | `"3/9"` | `10` | `(3, 9, None)` |
-| F11 | Total egal cu max_tracks (exact pe limită) | `"3/10"` | `10` | `(3, 10, None)` |
+| F11 | Total egal cu max_tracks| `"3/10"` | `10` | `(3, 10, None)` |
 | F12 | Total depășește max_tracks cu o unitate | `"3/11"` | `10` | `(None, None, "total exceeds max")` |
 | F13 | Current sub max_tracks cu o unitate (fără total) | `"9"` | `10` | `(9, None, None)` |
-| F14 | Current egal cu max_tracks (exact pe limită, fără total) | `"10"` | `10` | `(10, None, None)` |
-| F15 | Current depășește max_tracks cu o unitate (fără total) | `"11"` | `10` | `(None, None, "current exceeds max")` |
+| F14 | Current egal cu max_tracks | `"10"` | `10` | `(10, None, None)` |
+| F15 | Current depășește max_tracks cu o unitate| `"11"` | `10` | `(None, None, "current exceeds max")` |
 
 ![Boundary Values](photos/BV.png)
 
-# Testare structurală — `validate_and_normalize`
+# Testare structurală 
  
 ## Control Flow Graph (CFG)
+
+![Code](photos/code.png)
  
 ![CFG validate_and_normalize](diagrams/cfg.drawio.png)
 
@@ -110,18 +101,18 @@ Frontierele identificate în funcție sunt:
  
 Fiecare nod din CFG trebuie parcurs cel puțin o dată.
  
-| Test | `track_num` | `max_tracks` | Noduri parcurși | Output așteptat |
+| Test | `track_num` | `max_tracks` | Nod parcurs | Output așteptat |
 |------|-------------|--------------|-----------------|-----------------|
-| SC1 | `None` | `None` | 7 → 8 | `(None, None, "empty input")` |
-| SC2 | `"   "` | `None` | 7 → 10 → 12 → 13 | `(None, None, "empty input")` |
-| SC3 | `"//"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 19 → 21,22 → 24 | `(None, None, "parse error")` |
-| SC4 | `"0/10"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 19 → 21,22 → 26 → 27 | `(None, None, "zero not allowed")` |
-| SC5 | `"abc"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 29 → 30 → 31 | `(None, None, "parse error")` |
-| SC6 | `"0"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 29 → 30 → 32 → 33 → 34 | `(None, None, "zero not allowed")` |
-| SC7 | `"7/3"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 19 → 21,22 → 26 → 36 → 37 | `(None, None, "current exceeds total")` |
-| SC8 | `"3/15"` | `10` | 7 → 10 → 12 → 15,16 → 18 → 19 → 21,22 → 26 → 36 → 39 → 40 → 41 | `(None, None, "total exceeds max")` |
-| SC9 | `"8"` | `5` | 7 → 10 → 12 → 15,16 → 18 → 29 → 30 → 32 → 33 → 36 → 39 → 40 → 42 → 43 | `(None, None, "current exceeds max")` |
-| SC10 | `"3/10"` | `None` | 7 → 10 → 12 → 15,16 → 18 → 19 → 21,22 → 26 → 36 → 39 → 45 | `(3, 10, None)` |
+| SC1 | `None` | `None` | 7, 8 | `(None, None, "empty input")` |
+| SC2 | `"   "` | `None` | 7, 10, 12, 13 | `(None, None, "empty input")` |
+| SC3 | `"//"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `(None, None, "parse error")` |
+| SC4 | `"0/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27 | `(None, None, "zero not allowed")` |
+| SC5 | `"abc"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 31 | `(None, None, "parse error")` |
+| SC6 | `"0"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 34 | `(None, None, "zero not allowed")` |
+| SC7 | `"7/3"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37 | `(None, None, "current exceeds total")` |
+| SC8 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` |
+| SC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` |
+| SC10 | `"3/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 45 | `(3, 10, None)` |
 
 ![Statement Coverage](photos/SC.png)
 
@@ -195,3 +186,63 @@ Fiecare condiție individuală dintr-o decizie compusă trebuie să ia atât val
  
 
  ![Condition Coverage](photos/CC.png)
+
+ ## Testarea circuitelor independente
+ 
+Adăugând câte un arc de la fiecare nod terminal (8, 13, 24, 27, 31, 34, 37, 41, 43, 45) la nodul de start (7), obținem un graf complet conectat cu:
+ 
+- n = 26 noduri
+- e = 38 arce
+- p = 1 
+$$V(G) = e - n + 2p = 38 - 26 + 2 = 14$$
+ 
+Circuite independente:
+ 
+a) 7, 8, 7
+ 
+b) 7, 10, 12, 13, 7
+ 
+c) 7, 10, 12, 15-16, 18, 19, 21-22, 24, 7
+ 
+d) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27, 7
+ 
+e) 7, 10, 12, 15-16, 18, 29, 30, 31, 7
+ 
+f) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 34, 7
+ 
+g) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37, 7
+ 
+h) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 37, 7
+ 
+i) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 45, 7
+ 
+j) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 45, 7
+ 
+k) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41, 7
+ 
+l) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43, 7
+ 
+m) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 42, 45, 7
+ 
+n) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45, 7
+
+
+
+| Circuit | `track_num` | `max_tracks` | Output așteptat | Acoperit de |
+|---------|-------------|--------------|-----------------|-------------|
+| a) 7, 8 | `None` | `None` | `(None, None, "empty input")` | BC1 |
+| b) 7, 10, 12, 13 | `"   "` | `None` | `(None, None, "empty input")` | BC2 |
+| c) 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `"//"` | `None` | `(None, None, "parse error")` | BC3 |
+| d) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27 | `"0/10"` | `None` | `(None, None, "zero not allowed")` | BC4 |
+| e) 7, 10, 12, 15-16, 18, 29, 30, 31 | `"abc"` | `None` | `(None, None, "parse error")` | BC5 |
+| f) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 34 | `"0"` | `None` | `(None, None, "zero not allowed")` | BC6 |
+| g) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37 | `"7/3"` | `None` | `(None, None, "current exceeds total")` | BC7 |
+| h) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 37 | — | — | — | nefezabil |
+| i) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 45 | `"3/10"` | `None` | `(3, 10, None)` | BC10 |
+| j) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 45 | `"5"` | `None` | `(5, None, None)` | CI |
+| k) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | BC8 |
+| l) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `"8"` | `5` | `(None, None, "current exceeds max")` | BC9 |
+| m) 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 42, 45 | `"3/10"` | `10` | `(3, 10, None)` | BC11 |
+| n) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45 | `"3"` | `10` | `(3, None, None)` | CC2 |
+
+![Independent Circuits](photos/CI.png)
