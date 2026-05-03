@@ -115,7 +115,7 @@ class AlbumBatchProcessor:
                 if not metadata.track_number:
                     continue
                 
-                current, total = TrackNumberParser.parse(metadata.track_number)
+                current, total, _ = TrackNumberParser.validate_and_normalize(metadata.track_number)
                 if current:
                     track_info.append({
                         'path': file_path,
