@@ -5,15 +5,15 @@ class TestValidateAndNormalizeEmptyInput:
     """Teste pentru cazuri de input gol/invalid."""
 
     def test_none_input(self):
-        """None trebuie sa returneze (None, None, 'empty input')."""
+        """None -> (None, None, 'empty input')."""
         assert TrackNumberParser.validate_and_normalize(None) == (None, None, "empty input")
 
     def test_empty_string(self):
-        """String gol trebuie sa returneze (None, None, 'empty input')."""
+        """'' -> (None, None, 'empty input')."""
         assert TrackNumberParser.validate_and_normalize("") == (None, None, "empty input")
 
     def test_only_spaces(self):
-        """String cu doar spații trebuie sa returneze (None, None, 'empty input')."""
+        """'   ' -> (None, None, 'empty input')."""
         assert TrackNumberParser.validate_and_normalize("   ") == (None, None, "empty input")
 
 
@@ -168,106 +168,122 @@ class TestValidateAndNormalizeSuccessSlash:
         """'5/09' -> (5, 9, None)."""
         assert TrackNumberParser.validate_and_normalize("5/09") == (5, 9, None)
 
-    def test_bc6_d6_false_d7_true(self):
-        assert TrackNumberParser.validate_and_normalize("0") == (None, None, "zero not allowed")
 
-    def test_bc7_d5_false_d8_true(self):
-        assert TrackNumberParser.validate_and_normalize("7/3") == (None, None, "current exceeds total")
+class TestValidateAndNormalizeEdgeCases:
+    """Teste pentru edge case-uri si cazuri extreme."""
 
-    def test_bc8_d8_false_d9_true_d10_true(self):
-        assert TrackNumberParser.validate_and_normalize("3/15", max_tracks=10) == (None, None, "total exceeds max")
+    def test_multiple_slashes_keeps_first(self):
+        """'3/4/5' -> (3, 4, None) - doar primul slash conteaza."""
+        assert TrackNumberParser.validate_and_normalize("3/4/5") == (3, 4, None)
 
-    def test_bc9_d10_false_d11_true(self):
-        assert TrackNumberParser.validate_and_normalize("8", max_tracks=5) == (None, None, "current exceeds max")
+    def test_very_large_numbers(self):
+        """'999999/1000000' -> (999999, 1000000, None)."""
+        assert TrackNumberParser.validate_and_normalize("999999/1000000") == (999999, 1000000, None)
 
-    def test_bc10_d9_false(self):
-        assert TrackNumberParser.validate_and_normalize("3/10") == (3, 10, None)
+    def test_single_very_large_number(self):
+        """'999999' -> (999999, None, None)."""
+        assert TrackNumberParser.validate_and_normalize("999999") == (999999, None, None)
 
-    def test_bc11_d9_true_d10_false_d11_false(self):
-        assert TrackNumberParser.validate_and_normalize("3/10", max_tracks=10) == (3, 10, None)
+    def test_complex_text_extraction(self):
+        """'3 track / 10 albums' -> (3, 10, None)."""
+        assert TrackNumberParser.validate_and_normalize("3 track / 10 albums") == (3, 10, None)
 
+    def test_only_digits_surrounded_by_chars(self):
+        """'T3D/A10B' -> (3, 10, None)."""
+        assert TrackNumberParser.validate_and_normalize("T3D/A10B") == (3, 10, None)
 
-class TestConditionCoverage:
+    def test_dash_instead_of_slash_extracts_all_digits(self):
+        """'3-10' -> (310, None, None) - fara slash, extrage toate."""
+        assert TrackNumberParser.validate_and_normalize("3-10") == (310, None, None)
 
-    def test_bc1_d1_true(self):
-        assert TrackNumberParser.validate_and_normalize(None) == (None, None, "empty input")
+    def test_no_slash_with_mixed_separators_extracts_all(self):
+        """'3:10' -> (310, None, None) - fara slash."""
+        assert TrackNumberParser.validate_and_normalize("3:10") == (310, None, None)
 
-    def test_bc2_d1_false_d2_true(self):
-        assert TrackNumberParser.validate_and_normalize("   ") == (None, None, "empty input")
+    def test_consecutive_spaces_in_middle_without_slash(self):
+        """'3    10' -> (310, None, None) - fara slash."""
+        assert TrackNumberParser.validate_and_normalize("3    10") == (310, None, None)
 
-    def test_bc3_d3_true_d4_true(self):
-        assert TrackNumberParser.validate_and_normalize("//") == (None, None, "parse error")
-
-    def test_bc4_d4_false_d5_true(self):
-        assert TrackNumberParser.validate_and_normalize("0/10") == (None, None, "zero not allowed")
-
-    def test_bc5_d3_false_d6_true(self):
-        assert TrackNumberParser.validate_and_normalize("abc") == (None, None, "parse error")
-
-    def test_bc6_d6_false_d7_true(self):
-        assert TrackNumberParser.validate_and_normalize("0") == (None, None, "zero not allowed")
-
-    def test_bc7_d5_false_d8_true(self):
-        assert TrackNumberParser.validate_and_normalize("7/3") == (None, None, "current exceeds total")
-
-    def test_bc8_d8_false_d9_true_d10_true(self):
-        assert TrackNumberParser.validate_and_normalize("3/15", max_tracks=10) == (None, None, "total exceeds max")
-
-    def test_bc9_d10_false_d11_true(self):
-        assert TrackNumberParser.validate_and_normalize("8", max_tracks=5) == (None, None, "current exceeds max")
-
-    def test_bc10_d9_false(self):
-        assert TrackNumberParser.validate_and_normalize("3/10") == (3, 10, None)
-
-    def test_bc11_d9_true_d10_false_d11_false(self):
-        assert TrackNumberParser.validate_and_normalize("3/10", max_tracks=10) == (3, 10, None)
-
-    def test_cc1_c2_true(self):
-        assert TrackNumberParser.validate_and_normalize("3/0") == (None, None, "zero not allowed")
-
-    def test_cc2_c8_false(self):
-        assert TrackNumberParser.validate_and_normalize("3", max_tracks=10) == (3, None, None)
+    def test_spaces_around_slash_are_handled(self):
+        """'3    /    10' -> (3, 10, None) - cu slash."""
+        assert TrackNumberParser.validate_and_normalize("3    /    10") == (3, 10, None)
 
 
-class TestIndependentCircuits:
+class TestValidateAndNormalizeMaxTracksExtreme:
+    """Teste extreme pentru max_tracks validation."""
 
-    def test_ci_a(self):
-        assert TrackNumberParser.validate_and_normalize(None) == (None, None, "empty input")
+    def test_max_tracks_one_minimum(self):
+        """'1' cu max_tracks=1 -> (1, None, None) minimum."""
+        assert TrackNumberParser.validate_and_normalize("1", max_tracks=1) == (1, None, None)
 
-    def test_ci_b(self):
-        assert TrackNumberParser.validate_and_normalize("   ") == (None, None, "empty input")
+    def test_max_tracks_one_exceeded(self):
+        """'2' cu max_tracks=1 -> (None, None, 'current exceeds max')."""
+        assert TrackNumberParser.validate_and_normalize("2", max_tracks=1) == (None, None, "current exceeds max")
 
-    def test_ci_c(self):
-        assert TrackNumberParser.validate_and_normalize("//") == (None, None, "parse error")
+    def test_max_tracks_very_large(self):
+        """'500/999' cu max_tracks=999 -> (500, 999, None)."""
+        assert TrackNumberParser.validate_and_normalize("500/999", max_tracks=999) == (500, 999, None)
 
-    def test_ci_d(self):
-        assert TrackNumberParser.validate_and_normalize("0/10") == (None, None, "zero not allowed")
+    def test_max_tracks_very_large_exceeded_by_one(self):
+        """'500/1000' cu max_tracks=999 -> (None, None, 'total exceeds max')."""
+        assert TrackNumberParser.validate_and_normalize("500/1000", max_tracks=999) == (None, None, "total exceeds max")
 
-    def test_ci_e(self):
-        assert TrackNumberParser.validate_and_normalize("abc") == (None, None, "parse error")
+    def test_max_tracks_boundary_current_just_below(self):
+        """'9' cu max_tracks=10 -> (9, None, None)."""
+        assert TrackNumberParser.validate_and_normalize("9", max_tracks=10) == (9, None, None)
 
-    def test_ci_f(self):
-        assert TrackNumberParser.validate_and_normalize("0") == (None, None, "zero not allowed")
+    def test_max_tracks_boundary_current_just_above(self):
+        """'11' cu max_tracks=10 -> (None, None, 'current exceeds max')."""
+        assert TrackNumberParser.validate_and_normalize("11", max_tracks=10) == (None, None, "current exceeds max")
 
-    def test_ci_g(self):
-        assert TrackNumberParser.validate_and_normalize("7/3") == (None, None, "current exceeds total")
+    def test_max_tracks_boundary_total_just_below(self):
+        """'5/9' cu max_tracks=10 -> (5, 9, None)."""
+        assert TrackNumberParser.validate_and_normalize("5/9", max_tracks=10) == (5, 9, None)
 
-    # h) nefezabil
+    def test_max_tracks_boundary_total_just_above(self):
+        """'5/11' cu max_tracks=10 -> (None, None, 'total exceeds max')."""
+        assert TrackNumberParser.validate_and_normalize("5/11", max_tracks=10) == (None, None, "total exceeds max")
 
-    def test_ci_i(self):
-        assert TrackNumberParser.validate_and_normalize("3/10") == (3, 10, None)
 
-    def test_ci_j(self):
-        assert TrackNumberParser.validate_and_normalize("5") == (5, None, None)
+class TestValidateAndNormalizeExtremeInputs:
+    """Teste pentru inputuri extreme si edge case-uri de caractere."""
 
-    def test_ci_k(self):
-        assert TrackNumberParser.validate_and_normalize("3/15", max_tracks=10) == (None, None, "total exceeds max")
+    def test_special_chars_around_digits_with_slash(self):
+        """'#3!@/&10%' -> (3, 10, None) cu slash."""
+        assert TrackNumberParser.validate_and_normalize("#3!@/&10%") == (3, 10, None)
 
-    def test_ci_l(self):
-        assert TrackNumberParser.validate_and_normalize("8", max_tracks=5) == (None, None, "current exceeds max")
+    def test_special_chars_around_digits_no_slash(self):
+        """'#3!@&10%' -> (310, None, None) fara slash."""
+        assert TrackNumberParser.validate_and_normalize("#3!@&10%") == (310, None, None)
 
-    def test_ci_m(self):
-        assert TrackNumberParser.validate_and_normalize("3/10", max_tracks=10) == (3, 10, None)
+    def test_dots_between_digits_with_slash(self):
+        """'1.2.3/4.5.6' -> (123, 456, None)."""
+        assert TrackNumberParser.validate_and_normalize("1.2.3/4.5.6") == (123, 456, None)
 
-    def test_ci_n(self):
-        assert TrackNumberParser.validate_and_normalize("3", max_tracks=10) == (3, None, None)
+    def test_dots_between_digits_no_slash(self):
+        """'1.2.3' -> (123, None, None) fara slash."""
+        assert TrackNumberParser.validate_and_normalize("1.2.3") == (123, None, None)
+
+    def test_leading_trailing_zeros_with_slash(self):
+        """'00123/00456' -> (123, 456, None)."""
+        assert TrackNumberParser.validate_and_normalize("00123/00456") == (123, 456, None)
+
+    def test_leading_trailing_zeros_no_slash(self):
+        """'00123' -> (123, None, None) fara slash."""
+        assert TrackNumberParser.validate_and_normalize("00123") == (123, None, None)
+
+    def test_minimum_valid_current(self):
+        """'1' -> (1, None, None) minimum."""
+        assert TrackNumberParser.validate_and_normalize("1") == (1, None, None)
+
+    def test_maximum_common_current_single_digit(self):
+        """'9' -> (9, None, None) maximum single digit."""
+        assert TrackNumberParser.validate_and_normalize("9") == (9, None, None)
+
+    def test_minimum_valid_pair(self):
+        """'1/1' -> (1, 1, None) minimum pair."""
+        assert TrackNumberParser.validate_and_normalize("1/1") == (1, 1, None)
+
+    def test_transition_from_single_to_double_digit(self):
+        """'9/10' -> (9, 10, None) tranzitie digit."""
+        assert TrackNumberParser.validate_and_normalize("9/10") == (9, 10, None)
