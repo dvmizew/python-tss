@@ -179,7 +179,7 @@ Fiecare condiție dintr-o decizie trebuie să ia atât valoarea True cât și va
 
 ### Acoperire True/False pentru fiecare condiție
 
-| Condiție | Nod | Test True | `track_num` | `max_tracks` | Noduri parcurși (True) | Output așteptat | Test False | `track_num` | `max_tracks` | Noduri parcurși (False) | Output așteptat |
+| Condiție | Nod | Test True | `track_num` | `max_tracks` | Noduri parcurse (True) | Output așteptat | Test False | `track_num` | `max_tracks` | Noduri parcurse (False) | Output așteptat |
 |----------|-----|-----------|-------------|--------------|------------------------|-----------------|------------|-------------|--------------|-------------------------|-----------------|
 | C1: `not track_num` | 7 | CC1 | `None` | `None` | 7, 8 | `(None, None, "empty input")` | CC2 | `"   "` | `None` | 7, 10, 12, 13 | `(None, None, "empty input")` |
 | C2: `not track_str` | 12 | CC2 | `"   "` | `None` | 7, 10, 12, 13 | `(None, None, "empty input")` | CC3 | `"//"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `(None, None, "parse error")` |
