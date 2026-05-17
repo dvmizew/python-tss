@@ -327,3 +327,7 @@ Mutația: Utilitarul a forțat condiția if c.isdigit(): să fie mereu True pe r
 Problema: Deși extragerea cifrelor era testată, nu exista niciun test care să includă litere după slash.
 
 Soluția adăugată: Introducerea testului extrem "track3/album10", care garantează că orice forțare a condiției isdigit va duce la un eșec de parsare, omorând instantaneu mutantul.
+
+### Testare cu cosmic-ray
+
+![Mutatii](photos/mutatii4.png)

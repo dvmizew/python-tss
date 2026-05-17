@@ -1,0 +1,7 @@
+[cosmic-ray]
+module-path = "track_number_parser.py"
+timeout = 10.0
+test-command = "PYTHONPATH=. python -m pytest tests/test_track_number_parser.py --ignore=tests/test_audio_utils.py"
+
+[cosmic-ray.distributor]
+name = "local"
