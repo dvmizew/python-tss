@@ -2,9 +2,7 @@
 
 ## 1. Introducere
 
-Acest raport documenteaza utilizarea GitHub Copilot [1] in procesul de dezvoltare si optimizare a suitei de teste unitare pentru clasa `TrackNumberParser`. Conform cerintelor proiectului, am comparat testele proprii cu cele autogenerate si am evidentiati diferentele si beneficiile obtinute.
-
-Data raportului: Mai 3, 2026
+Acest raport documenteaza utilizarea GitHub Copilot in procesul de dezvoltare si optimizare a suitei de teste unitare pentru clasa `TrackNumberParser`. Conform cerintelor proiectului, am comparat testele proprii cu cele autogenerate si am evidentiati diferentele si beneficiile obtinute.
 
 ---
 
@@ -18,7 +16,7 @@ Clasa `TrackNumberParser` din modulul `track_number_parser.py` conține o singur
 def validate_and_normalize(track_num: Optional[str], max_tracks: Optional[int] = None) -> Tuple[Optional[int], Optional[int], Optional[str]]
 ```
 
-Metoda trebuie sa respecte principiile de validare din literatura software testing [2] si sa gestioneze cazurile limita conform analizei valorilor de frontiera (Boundary Values) [3].
+Metoda trebuie sa respecte principiile de validare din literatura software testing si sa gestioneze cazurile limita conform analizei valorilor de frontiera (Boundary Values).
 
 ### 2.2 Provocări Inițiale
 
@@ -30,11 +28,11 @@ Fără Copilot, avem riscul de:
 
 ---
 
-## 3. Utilizarea GitHub Copilot [1]
+## 3. Utilizarea GitHub Copilot
 
 ### 3.1 Prompt 1: Identificare Cazuri de Test
 
-Utilizand GitHub Copilot [1], am trimis prompturi pentru a genera idei de teste. Conform [5], Copilot este mai eficient când se combină cu cunoștințe specialiste. Copilot [1] a oferit sugestii structurate in clase semantice:
+Utilizand GitHub Copilot, am trimis prompturi pentru a genera idei de teste. Copilot este mai eficient când se combină cu cunoștințe specialiste. Copilot a oferit sugestii structurate in clase semantice:
 
 Prompt trimis:
 ```
@@ -99,9 +97,9 @@ Avantaje format `->` :
 
 ---
 
-## 4. Comparație: Teste Copilot vs Teste Finale [2][3]
+## 4. Comparație: Teste Copilot vs Teste Finale
 
-Potrivit literaturii [2], testarea eficientă necesită balans între automatizare și rafinament manual.
+Potrivit literaturii, testarea eficientă necesită balans între automatizare și rafinement manual.
 
 | Metrica | Copilot Sugerat | Teste Finale | Diferență |
 |---------|---------|---------|---------|
@@ -113,7 +111,7 @@ Potrivit literaturii [2], testarea eficientă necesită balans între automatiza
 | Timp Redactare | 0 (Copilot) | 60% redus | -40% vs manual |
 | Rate Passing | - | 62/62 (100%) | Perfect |
 
-Standardizare: Toate 62 teste au format conform best practices din [2][3], iar documentarea este criticală pentru mentenabilitate. `'input' -> (output)` pentru consistență.
+Standardizare: Toate 62 teste au format conform best practices, iar documentarea este critică pentru mentenabilitate. `'input' -> (output)` pentru consistență.
 
 ---
 
@@ -144,9 +142,9 @@ Total: 62/62 (100%)
 
 ---
 
-## 6. Exemplu Detaliat: Evoluția unui Test [2][3]
+## 6. Exemplu Detaliat: Evoluția unui Test
 
-Analiza cazurilor de test conform standarde [2] și [3] arată importanța documentării clare.
+Analiza cazurilor de test conform standardelor arată importanța documentării clare.
 
 ### 6.1 Idea Inițială
 
@@ -163,9 +161,9 @@ Am analizat și am îmbunătățit cu naming descriptiv și docstring standardiz
 
 ---
 
-## 7. Diferențe: Ce a Făcut Copilot vs Ce Am Făcut Noi [1][5]
+## 7. Diferențe: Ce a Făcut Copilot vs Ce Am Făcut Noi
 
-Potrivit documentației GitHub Copilot [1], limitele sistemului sunt în cazurile specifice domeniului.
+Potrivit documentației GitHub Copilot, limitele sistemului sunt în cazurile specifice domeniului.
 
 ### 7.1 Copilot - Puncte Forte
 
@@ -181,9 +179,9 @@ Structură și Organizare
 
 ---
 
-## 8. Impact și Metrice [2][3]
+## 8. Impact și Metrice
 
-Conform cercetărilor în testing [2][3], metodele hibride (AI + manual) duc la cea mai bună calitate.
+Conform cercetărilor în testing, metodele hibride (AI + manual) duc la cea mai bună calitate.
 
 ### 8.1 Timp și Eficiență
 
@@ -206,9 +204,9 @@ Conform cercetărilor în testing [2][3], metodele hibride (AI + manual) duc la 
 
 ---
 
-## 9. Lecții Învățate [1][2][3]
+## 9. Lecții Învățate
 
-Din perspectiva best practices din [2][3] și utilizării AI [1], proiectul evdențiază [2][3] și utilizării AI [1], proiectul a evidențiat mai multe aspecte importante.
+Din perspectiva best practices și utilizării AI, proiectul a evidențiat mai multe aspecte importante.
 
 ### 9.1 Ce a Funcționat Excelent
 
@@ -226,9 +224,9 @@ Cazuri Specifice Domeniului
 
 ---
 
-## 10. Testare Manuală vs Cu Copilot vs Hibrid [1][2][3]
+## 10. Testare Manuală vs Cu Copilot vs Hibrid
 
-Literatura [2][3] și documentația [1] sugerează că abordarea hibridă este optimă.
+Literatura și documentația sugerează că abordarea hibridă este optimă.
 
 ### 10.1 Abordare Manuală
 
@@ -258,12 +256,12 @@ Dezavantaje:
 
 ### 10.3 Concluzie
 
-Potrivit literaturii [2] și [3], Copilot Hibrid este optim pentru testare:
+Potrivit literaturii, Copilot Hibrid este optim pentru testare:
 - Copilot pentru structură și brainstorming
 - Specialiști pentru context și edge cases
 - Rezultat: testare completă și eficientă
 
-Pentru utilizare efectivă Copilot [1] conform best practices [2], echipele ar trebui să:
+Pentru utilizare efectivă Copilot conform best practices, echipele ar trebui să:
 
 1. Utilizare pentru Brainstorming
    - Copilot pentru generare idei rapide
@@ -287,23 +285,7 @@ Pentru utilizare efectivă Copilot [1] conform best practices [2], echipele ar t
 
 ---
 
-## 11. Referințe Bibliografice și Resurse
-
-[1] GitHub, GitHub Copilot Documentation, https://docs.github.com/en/copilot, Data ultimei accesări: 3 mai 2026
-
-[2] Sommerville, I., Software Engineering, Pearson, 2015
-
-[3] Myers, G. J.; Sandler, C.; Badgett, T., The Art of Software Testing, Wiley, 2011
-
-[4] Google, Testing Best Practices for Python, https://developers.google.com/tech-writing, Data ultimei accesări: 3 mai 2026
-
-[5] GitHub Copilot, https://github.com/features/copilot, Data generării: 3 mai 2026
-
-[6] OpenAI, ChatGPT, https://chatgpt.com/, Data generării: 3 mai 2026
-
----
-
-## 12. Capturi de ecran cu execuția testelor
+## 11. Capturi de ecran cu execuția testelor
 
 ### Echivalență Class (EC)
 
@@ -322,3 +304,20 @@ Output: 15 teste PASSED în 0.01s pentru strategie Boundary Values.
 ![Code Source](photos/code.png)
 
 Metoda validate_and_normalize() din clasa TrackNumberParser.
+
+---
+
+## 12. Referințe Bibliografice și Resurse
+
+GitHub, GitHub Copilot Documentation, https://docs.github.com/en/copilot
+Sommerville, I., Software Engineering, Pearson, 2015
+
+Myers, G. J.; Sandler, C.; Badgett, T., The Art of Software Testing, Wiley, 2011
+
+Google, Testing Best Practices for Python, https://developers.google.com/tech-writing
+
+GitHub Copilot, https://github.com/features/copilot
+
+OpenAI, ChatGPT, https://chatgpt.com/
+
+---
