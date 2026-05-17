@@ -256,7 +256,7 @@ Dezavantaje:
 
 ### 10.3 Concluzie
 
-Potrivit literaturii, Copilot Hibrid este optim pentru testare:
+Copilot Hibrid este optim pentru testare:
 - Copilot pentru structură și brainstorming
 - Specialiști pentru context și edge cases
 - Rezultat: testare completă și eficientă
@@ -278,7 +278,7 @@ Pentru utilizare efectivă Copilot conform best practices, echipele ar trebui s�
    - Template de naming consistent
    - Docstring `'input' -> (output)`
 
-4. Combine Copilot + Cunoștințe Specialiste
+4. Combină Copilot + Cunoștințe Specialiste
    - Copilot pentru viteză
    - Specialiști pentru cazuri extreme
    - Rezultat: testare de calitate

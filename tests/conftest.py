@@ -4,7 +4,6 @@ Pytest configuration and shared fixtures for audio processing tests.
 import pytest
 import tempfile
 import os
-from pathlib import Path
 
 
 @pytest.fixture

@@ -1,3 +1,4 @@
+import argparse
 from typing import Optional, Tuple
 
 class TrackNumberParser:
@@ -9,7 +10,6 @@ class TrackNumberParser:
         allow_zero: bool = False  # CERINȚA: Parametrul 3
     ) -> Tuple[Optional[int], Optional[int], Optional[str]]:
         
-        # CERINȚA: if fără else
         if not track_num:
             return None, None, "empty input"
 
@@ -18,11 +18,9 @@ class TrackNumberParser:
         if not track_str:
             return None, None, "empty input"
         
-        # CERINȚA: if cu else
         if "/" in track_str:
             parts = track_str.split("/")
             try:
-                # CERINȚA: Instrucțiune repetitivă (buclă for)
                 cur_str = ""
                 for c in parts[0]:
                     if c.isdigit():
@@ -38,11 +36,9 @@ class TrackNumberParser:
             except (ValueError, IndexError):
                 return None, None, "parse error"
 
-            # Mutatest fix (evităm ==) + CERINȚA: Condiție compusă
             if 0 in (current, total) and allow_zero is False:
                 return None, None, "zero not allowed"
         else:
-            # CERINȚA: Instrucțiune repetitivă
             digits = ""
             for c in track_str:
                 if c.isdigit():
@@ -52,12 +48,11 @@ class TrackNumberParser:
                 return None, None, "parse error"
             
             current = int(digits)
-            total = None  # FIX: Previne UnboundLocalError
+            total = None
             
             if current == 0 and allow_zero is False:
                 return None, None, "zero not allowed"
             
-        # Condiție compusă
         if total is not None and current > total:
             return None, None, "current exceeds total"
 
@@ -72,7 +67,34 @@ class TrackNumberParser:
     @staticmethod
     def pad_track(track_number: Optional[int]) -> str:
         """Adăugată pentru compatibilitate cu audio_utils.py"""
-        # Mutatest fix: Folosim isinstance în loc de "is None"
         if not isinstance(track_number, int):
             return ""
         return f"{track_number:02d}"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="run the class"
+    )
+    parser.add_argument("track_num", nargs="?", help="Track number to parse")
+    parser.add_argument("max_tracks", nargs="?", type=int, help="Optional maximum track count")
+    args = parser.parse_args()
+
+    if args.track_num is None:
+        samples = [
+            ("3", None),
+            ("3/10", None),
+            ("track3/album10", None),
+            ("0", None),
+        ]
+        for track_num, max_tracks in samples:
+            result = TrackNumberParser.validate_and_normalize(track_num, max_tracks)
+            print(f"input={track_num!r}, max_tracks={max_tracks!r} -> {result}")
+        return
+
+    result = TrackNumberParser.validate_and_normalize(args.track_num, args.max_tracks)
+    print(result)
+
+
+if __name__ == "__main__":
+    main()

@@ -13,8 +13,8 @@ Proiectul a fost dezvoltat și testat pe trei sisteme diferite. Mai jos sunt pre
 
 | Membru | OS | Procesor | RAM |
 |--------|-----|----------|-----|
-| Radu Daniel | Fedora 43 | AMD Ryzen 7 7730U | 16 GB |
-| Roman Bianca | Ubuntu 24.04 | Intel Core i7-1255U (12th Gen) | 16 GB |
+| Radu Daniel - Dumitru | Fedora 43 | AMD Ryzen 7 7730U | 16 GB |
+| Roman Bianca - Gabriela| Ubuntu 24.04 | Intel Core i7-1255U (12th Gen) | 16 GB |
 | Costache Carolina-Andreea | macOS Tahoe | Apple M4 Pro | 24 GB |
 
 Versiunile tool-urilor utilizate sunt identice pe toate sistemele:

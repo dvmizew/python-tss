@@ -289,7 +289,6 @@
 #         assert TrackNumberParser.validate_and_normalize("9/10") == (9, 10, None)
 
 
-import pytest
 from track_number_parser import TrackNumberParser
 
 

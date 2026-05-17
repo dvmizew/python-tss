@@ -65,7 +65,6 @@ class TrackNumberNormalizer:
         max_track = sorted_tracks[-1]
         num_tracks = len(track_numbers)
         
-        # Check if it's a continuous sequence
         is_continuous = (max_track - min_track + 1) == num_tracks
         
         # Should normalize if starts > 1 and continuous, or is single track != 1

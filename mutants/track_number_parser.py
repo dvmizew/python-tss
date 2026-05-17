@@ -1,7 +1,6 @@
 from typing import Optional, Tuple
 from typing import Annotated
 from typing import Callable
-from typing import ClassVar
 
 MutantDict = Annotated[dict[str, Callable], "Mutant"] # type: ignore
 

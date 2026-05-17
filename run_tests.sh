@@ -16,12 +16,10 @@ echo "Installing dependencies..."
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# Run tests with coverage
 echo ""
-echo "🧪 Running unit tests..."
+echo "Running unit tests..."
 pytest tests/ -v
 
-# Run coverage report
 echo ""
 echo "Generating coverage report..."
 pytest tests/ --cov=audio_utils --cov=metadata_utils --cov=file_processor \
