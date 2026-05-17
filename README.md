@@ -260,7 +260,7 @@ n) 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45, 7
 ![Independent Circuits](photos/CI.png)
 
 ## Testare bazată pe mutații (Mutation Testing)
-
+### Testare cu mutmut
 În urma rulării suitei de teste cu o acoperire a codului (coverage) activată în prealabil, mutmut a generat și verificat mutanții cu următoarele rezultate:
 
 ![Mutatii](photos/mutatii1.png)
@@ -272,3 +272,58 @@ Faptul că 44 din 47 de mutanți au fost detectați și uciși de teste valideaz
 Cei 3 mutanți care au supraviețuit reprezintă porțiuni de cod unde testele actuale trec, deși codul sursă a fost modificat de utilitar.
 
 ![Mutatii](photos/mutatii2.png)
+
+### Testarea cu mutatest
+
+În urma analizei și generării mutanților, utilitarul `mutatest` a produs următorul raport:
+
+| Metrică | Valoare obținută |
+|---------|------------------|
+| **Modul evaluat** | `track_number_parser.py` |
+| **Total mutanți injectați** | 17 mutanți |
+| 🎉 **Mutanți detectați (Killed)** | 17 mutanți |
+| 😾 **Mutanți supraviețuitori (Survived)**| 0 mutanți |
+
+![Mutatii](photos/mutatii3.png)
+
+**Rata de succes (Mutation Score Indicator): 100%**
+
+Consolidarea suitei de teste (Uciderea mutanților supraviețuitori)
+
+Deși suita inițială de teste a atins o acoperire structurală de 100% (Statement, Branch, Condition), analiza mutațională cu mutatest a scos la iveală câteva breșe subtile (mutanți supraviețuitori). Pentru a atinge Scorul Mutațional perfect de 100%, suita a fost extinsă cu un set de teste specifice (tip "Sniper Tests") și a suferit micro-refactorizări:
+
+Validarea comportamentului @staticmethod
+
+Mutația: Utilitarul a șters decoratorul @staticmethod.
+
+Problema: Testele apelau funcția direct de pe clasă (TrackNumberParser.validate...), trecând cu succes chiar și fără decorator.
+
+Soluția adăugată: Au fost create teste care instanțiază clasa (parser = TrackNumberParser()) și apelează metoda. Acest lucru garantează că lipsa decoratorului va arunca imediat o eroare de tip TypeError (din cauza argumentului self lipsă), ucigând mutantul.
+
+Acoperirea exhaustivă a funcțiilor secundare (pad_track)
+
+Mutația: Utilitarul a modificat logica internă din funcția pad_track (ex: returnând alte stringuri sau modificând verificarea lui None).
+
+Problema: Deși funcția principală era testată masiv, această funcție utilitară a fost omisă din testele directe.
+
+Soluția adăugată: S-au adăugat teste care validează explicit corectitudinea padding-ului (ex: 5 -> "05") și protecția împotriva inputurilor invalide (stringuri sau None returnează "").
+
+Securizarea parametrilor default ("Sniper Tests")
+
+Mutația: Parametrii default au fost alterați în semnătura funcției (ex: max_tracks=None mutat în True/False, allow_zero=False mutat în None).
+
+Problema: Testele existente nu demonstrau matematic, în mod izolat, că acești parametri nu și-au schimbat tipul de date.
+
+Soluția adăugată: Au fost introduse teste aspre, izolate:
+
+Rularea inputului "100" fără a specifica max_tracks. Dacă max_tracks ar fi fost transformat în 1 (True) de către mutant, testul ar fi picat (100 > 1).
+
+Verificarea strictă a lui allow_zero is False în cod, pentru a evita falsurile pozitive specifice limbajului Python (unde și None și False sunt evaluate la fel de către un simplu not).
+
+Validarea strictă a filtrării caracterelor (Bucla repetitivă)
+
+Mutația: Utilitarul a forțat condiția if c.isdigit(): să fie mereu True pe ramura care procesează "totalul" (dreapta slash-ului).
+
+Problema: Deși extragerea cifrelor era testată, nu exista niciun test care să includă litere după slash.
+
+Soluția adăugată: Introducerea testului extrem "track3/album10", care garantează că orice forțare a condiției isdigit va duce la un eșec de parsare, omorând instantaneu mutantul.

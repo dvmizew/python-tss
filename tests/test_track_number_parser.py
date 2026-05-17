@@ -623,3 +623,45 @@ class TestIndependentCircuits:
     # Circuit n: 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45
     def test_valid_simple_within_max_covers_circuit_n(self):
         assert TrackNumberParser.validate_and_normalize("3", 10) == (3, None, None)
+
+
+
+class TestPadTrackAndStaticMethods:
+    """Teste finale pentru pad_track, @staticmethod și parametrii default (Sniper Tests)."""
+
+    def test_pad_track_invalid_type(self):
+        """Verifică ramura când track_number nu este int."""
+        assert TrackNumberParser.pad_track(None) == ""
+        assert TrackNumberParser.pad_track("5") == ""
+
+    def test_pad_track_number(self):
+        """Verifică formatarea corectă a stringului (padding cu 0)."""
+        assert TrackNumberParser.pad_track(5) == "05"
+        assert TrackNumberParser.pad_track(12) == "12"
+
+    def test_staticmethod_validate_on_instance(self):
+        """Verifică dacă funcția poate fi apelată corect de pe o instanță."""
+        parser = TrackNumberParser()
+        assert parser.validate_and_normalize("5") == (5, None, None)
+
+    def test_staticmethod_pad_track_on_instance(self):
+        """Verifică dacă funcția pad_track poate fi apelată de pe o instanță."""
+        parser = TrackNumberParser()
+        assert parser.pad_track(5) == "05"
+
+    def test_default_max_tracks_is_strictly_none(self):
+        """Verifică valoarea default pentru parametrul max_tracks."""
+        # Dacă max_tracks ar deveni True/1, track-ul 100 ar pica.
+        assert TrackNumberParser.validate_and_normalize("100") == (100, None, None)
+
+    def test_default_allow_zero_is_strictly_false(self):
+        """Verifică valoarea default pentru parametrul allow_zero."""
+        # Dacă allow_zero ar deveni True, "0" ar fi acceptat.
+        assert TrackNumberParser.validate_and_normalize("0") == (None, None, "zero not allowed")
+
+    def test_slash_format_with_letters_in_total_kills_mutant(self):
+        """Ucide mutantul care strică isdigit() pe parts[1]."""
+        # Dacă isdigit() e forțat pe True, "album10" nu va fi curățat, 
+        # va arunca ValueError și va returna "parse error". 
+        # Noi verificăm că știe să curețe literele și să dea (3, 10, None).
+        assert TrackNumberParser.validate_and_normalize("track3/album10") == (3, 10, None)
