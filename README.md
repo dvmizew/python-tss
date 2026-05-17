@@ -4,6 +4,8 @@
 
 Aplicația este un utilitar Python care redenumește automat fișiere audio pe baza tagurilor stocate în acestea (titlu, artist, număr de track), după formatul `NN - Titlu.ext`.
 
+[Videoclip Demo + teste](https://youtu.be/jBAUYMYHh08)
+
 ## Clasa testată
 
 Pentru ilustrarea strategiilor de testare am ales clasa `TrackNumberParser` din modulul `track_number_parser.py`. Aceasta este responsabilă de parsarea, validarea și normalizarea numerelor de track ale fișierelor audio și conține o singură metodă statică: `validate_and_normalize()`.
