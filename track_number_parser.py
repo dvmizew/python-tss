@@ -43,10 +43,3 @@ class TrackNumberParser:
                 return None, None, "current exceeds max"
 
         return current, total, None
-    
-    @staticmethod
-    def pad_track(track_number: Optional[int]) -> str:
-        """Adăugată pentru compatibilitate cu audio_utils.py"""
-        if track_number is None:
-            return ""
-        return f"{track_number:02d}"

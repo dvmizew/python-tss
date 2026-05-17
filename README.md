@@ -115,7 +115,7 @@ Fiecare nod din CFG trebuie parcurs cel puțin o dată.
 | SC10 | `"3/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 45 | `(3, 10, None)` |
 
 ![Statement Coverage](photos/SC.png)
-
+![Statement Coverage](photos/SC_report.png)
 
 ## Acoperire la nivel de ramură (Branch Coverage) 
  
@@ -148,42 +148,54 @@ Fiecare nod din CFG trebuie parcurs cel puțin o dată.
 | D7 | BC6 | `"0"` | `None` | `(None, None, "zero not allowed")` | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` |
 | D8 | BC7 | `"7/3"` | `None` | `(None, None, "current exceeds total")` | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` |
 | D9 | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | BC10 | `"3/10"` | `None` | `(3, 10, None)` |
-| D10 | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | BC11 | `"3/10"` | `10` | `(3, 10, None)` |
-| D11 | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` | BC11 | `"3/10"` | `10` | `(3, 10, None)` |
+| D10 | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | **BC11** | **`"3/10"`** | **`10`** | **`(3, 10, None)`** |
+| D11 | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` | **BC11** | **`"3/10"`** | **`10`** | **`(3, 10, None)`** |
 
 ![Branch Coverage](photos/BC.png)
-
-
+![Branch Coverage](photos/BC_report.png)
 ## Acoperire la nivel de condiție (Condition Coverage)
- 
-Fiecare condiție individuală dintr-o decizie compusă trebuie să ia atât valoarea True cât și valoarea False.
- 
-### Condițiile individuale din deciziile compuse
- 
-| ID | Decizie | Condiție individuală |
-|----|---------|----------------------|
-| C1 | D5: `cur==0 or tot==0` | `cur==0` |
-| C2 | D5: `cur==0 or tot==0` | `tot==0` |
-| C3 | D8: `tot is not None and cur > tot` | `tot is not None` |
-| C4 | D8: `tot is not None and cur > tot` | `cur > tot` |
-| C5 | D10: `tot is not None and tot > max` | `tot is not None` |
-| C6 | D10: `tot is not None and tot > max` | `tot > max` |
-| C7 | D11: `tot is None and cur > max` | `tot is None` |
-| C8 | D11: `tot is None and cur > max` | `cur > max` |
- 
-### Acoperire True/False pentru fiecare condiție individuală
- 
-| Condiție | Test True | `track_num` | `max_tracks` | Output așteptat | Test False | `track_num` | `max_tracks` | Output așteptat |
-|----------|-----------|-------------|--------------|-----------------|------------|-------------|--------------|-----------------|
-| C1: `cur==0` | BC4 | `"0/10"` | `None` | `(None, None, "zero not allowed")` | BC7 | `"7/3"` | `None` | `(None, None, "current exceeds total")` |
-| C2: `tot==0` | CC1 | `"3/0"` | `None` | `(None, None, "zero not allowed")` | BC4 | `"0/10"` | `None` | `(None, None, "zero not allowed")` |
-| C3: `tot is not None` | BC7 | `"7/3"` | `None` | `(None, None, "current exceeds total")` | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` |
-| C4: `cur > tot` | BC7 | `"7/3"` | `None` | `(None, None, "current exceeds total")` | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` |
-| C5: `tot is not None` | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` |
-| C6: `tot > max` | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` | BC11 | `"3/10"` | `10` | `(3, 10, None)` |
-| C7: `tot is None` | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` | BC8 | `"3/15"` | `10` | `(None, None, "total exceeds max")` |
-| C8: `cur > max` | BC9 | `"8"` | `5` | `(None, None, "current exceeds max")` | CC2 | `"3"` | `10` | `(3, None, None)` |
- 
+
+Fiecare condiție dintr-o decizie trebuie să ia atât valoarea True cât și valoarea False.
+
+### Condițiile din toate deciziile
+
+| ID | Decizie | Condiție |
+|----|---------|----------|
+| C1 | D1: `not track_num` | `not track_num` |
+| C2 | D2: `not track_str` | `not track_str` |
+| C3 | D3: `"/" in track_str` | `"/" in track_str` |
+| C4 | D4: `except (ValueError, IndexError)` | excepție aruncată |
+| C5 | D5: `cur==0 or tot==0` | `cur==0` |
+| C6 | D5: `cur==0 or tot==0` | `tot==0` |
+| C7 | D6: `not digits` | `not digits` |
+| C8 | D7: `cur==0` | `cur==0` |
+| C9 | D8: `tot is not None and cur > tot` | `tot is not None` |
+| C10 | D8: `tot is not None and cur > tot` | `cur > tot` |
+| C11 | D9: `max_tracks is not None` | `max_tracks is not None` |
+| C12 | D10: `tot is not None and tot > max_tracks` | `tot is not None` |
+| C13 | D10: `tot is not None and tot > max_tracks` | `tot > max_tracks` |
+| C14 | D11: `tot is None and cur > max_tracks` | `tot is None` |
+| C15 | D11: `tot is None and cur > max_tracks` | `cur > max_tracks` |
+
+### Acoperire True/False pentru fiecare condiție
+
+| Condiție | Nod | Test True | `track_num` | `max_tracks` | Noduri parcurși (True) | Output așteptat | Test False | `track_num` | `max_tracks` | Noduri parcurși (False) | Output așteptat |
+|----------|-----|-----------|-------------|--------------|------------------------|-----------------|------------|-------------|--------------|-------------------------|-----------------|
+| C1: `not track_num` | 7 | CC1 | `None` | `None` | 7, 8 | `(None, None, "empty input")` | CC2 | `"   "` | `None` | 7, 10, 12, 13 | `(None, None, "empty input")` |
+| C2: `not track_str` | 12 | CC2 | `"   "` | `None` | 7, 10, 12, 13 | `(None, None, "empty input")` | CC3 | `"//"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `(None, None, "parse error")` |
+| C3: `"/" in track_str` | 18 | CC3 | `"//"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `(None, None, "parse error")` | CC4 | `"abc"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 31 | `(None, None, "parse error")` |
+| C4: excepție aruncată | 19 | CC3 | `"//"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 24 | `(None, None, "parse error")` | CC5 | `"0/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27 | `(None, None, "zero not allowed")` |
+| C5: `cur==0` | 26 | CC5 | `"0/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27 | `(None, None, "zero not allowed")` | CC6 | `"7/3"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37 | `(None, None, "current exceeds total")` |
+| C6: `tot==0` | 26 | **CC7** | **`"3/0"`** | **`None`** | **7, 10, 12, 15-16, 18, 19, 21-22, 26, 27** | **`(None, None, "zero not allowed")`** | CC5 | `"0/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 27 | `(None, None, "zero not allowed")` |
+| C7: `not digits` | 30 | CC4 | `"abc"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 31 | `(None, None, "parse error")` | CC8 | `"0"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 34 | `(None, None, "zero not allowed")` |
+| C8: `cur==0` | 33 | CC8 | `"0"` | `None` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 34 | `(None, None, "zero not allowed")` | CC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` |
+| C9: `tot is not None` | 36 | CC6 | `"7/3"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37 | `(None, None, "current exceeds total")` | CC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` |
+| C10: `cur > tot` | 36 | CC6 | `"7/3"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 37 | `(None, None, "current exceeds total")` | CC10 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` |
+| C11: `max_tracks is not None` | 39 | CC10 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` | CC11 | `"3/10"` | `None` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 45 | `(3, 10, None)` |
+| C12: `tot is not None` | 40 | CC10 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` | CC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` |
+| C13: `tot > max_tracks` | 40 | CC10 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` | CC12 | `"3/10"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 42, 45 | `(3, 10, None)` |
+| C14: `tot is None` | 42 | CC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` | CC10 | `"3/15"` | `10` | 7, 10, 12, 15-16, 18, 19, 21-22, 26, 36, 39, 40, 41 | `(None, None, "total exceeds max")` |
+| C15: `cur > max_tracks` | 42 | CC9 | `"8"` | `5` | 7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 43 | `(None, None, "current exceeds max")` | **CC13** | **`"3"`** | **`10`** | **7, 10, 12, 15-16, 18, 29, 30, 32, 33, 36, 39, 40, 42, 45** | **`(3, None, None)`** |
 
  ![Condition Coverage](photos/CC.png)
 
